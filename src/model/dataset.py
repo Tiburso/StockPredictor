@@ -10,16 +10,15 @@ from db import get_db
 
 
 class StockDataset(Dataset):
-    def __init__(self, symbol, from_date, to_date, batch_size=64):
+    def __init__(self, symbol, batch_size=64):
         self.db = get_db()
         self.symbol = symbol
-        self.from_date = from_date
-        self.to_date = to_date
         self.batch_size = batch_size
 
     def __len__(self):
-        return len(self.db.stocks.find({"symbol": self.symbol}))
+        return self.db.stocks.count_documents({"symbol": self.symbol})
 
     def __getitem__(self, idx):
-        data = self.db.stocks.find({"symbol": self.symbol})[idx]
+        data = self.db.stocks.find_one({"symbol": self.symbol}, skip=int(idx))
+
         return torch.tensor(data["open"]), torch.tensor(data["close"])

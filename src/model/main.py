@@ -7,12 +7,12 @@ from sklearn.model_selection import train_test_split, KFold
 from sklearn.metrics import mean_squared_error
 
 
-from dataset import StockDataset
-from predictor import Predictor
+from model.dataset import StockDataset
+from model.predictor import Predictor
 
 
-def train_test_dataloader(symbol, from_date, to_date, batch_size=64):
-    dataset = StockDataset(symbol, from_date, to_date, batch_size)
+def train_test_dataloader(symbol, batch_size=64):
+    dataset = StockDataset(symbol, batch_size)
 
     train_idx, test_idx = train_test_split(range(len(dataset)), test_size=0.2)
 
@@ -25,8 +25,8 @@ def train_test_dataloader(symbol, from_date, to_date, batch_size=64):
     return train_loader, test_loader
 
 
-def k_fold_dataloader(symbol, from_date, to_date, batch_size=64, n_splits=5):
-    dataset = StockDataset(symbol, from_date, to_date, batch_size)
+def k_fold_dataloader(symbol, batch_size=64, n_splits=5):
+    dataset = StockDataset(symbol, batch_size)
 
     kf = KFold(n_splits=n_splits)
 
@@ -104,17 +104,13 @@ def main():
 
     # Define the data
     symbol = "AAPL"
-    from_date = "2021-01"
-    to_date = "2022-01"
     batch_size = 64
 
     # Get the dataloaders
-    train_loader, test_loader = train_test_dataloader(
-        symbol, from_date, to_date, batch_size
-    )
+    train_loader, test_loader = train_test_dataloader(symbol, batch_size)
 
     # Implement K-Fold Cross Validation
-    dataloaders = k_fold_dataloader(symbol, from_date, to_date, batch_size, n_splits=5)
+    dataloaders = k_fold_dataloader(symbol, batch_size, n_splits=5)
 
     for train_loader, test_loader in dataloaders:
         # Train the model
@@ -122,3 +118,7 @@ def main():
 
     # Test the model
     test(model, criterion, test_loader)
+
+
+if __name__ == "__main__":
+    main()
