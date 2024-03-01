@@ -1,10 +1,5 @@
-"""In this file I will build the PyTorch dataset class to load data from the database in batches to feed the model.
-I will also build a function to create the PyTorch DataLoader object to feed the data to the model.
-"""
-
 import torch
-from torch.utils.data import Dataset, DataLoader, Subset
-from sklearn.model_selection import train_test_split
+from torch.utils.data import Dataset
 
 from db import get_db
 
