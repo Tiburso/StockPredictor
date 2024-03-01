@@ -8,7 +8,7 @@ from sklearn.metrics import mean_squared_error
 
 
 from model.dataset import StockDataset
-from model.predictor import Predictor
+from model.predictor import LSTMModel
 
 
 def train_test_dataloader(symbol, batch_size=64):
@@ -43,35 +43,49 @@ def train(
     optimizer: torch.optim.Optimizer,
     criterion: torch.nn.Module,
     train_loader: DataLoader,
-    test_loader: DataLoader,
-    epochs: int = 10,
+    validation_loader: DataLoader,
+    device: torch.device,
 ):
-    for epoch in range(epochs):
-        # Training loop
-        model.train()
-        train_loss = 0.0
-        for i, data in enumerate(train_loader, 0):
-            inputs, labels = data
-            optimizer.zero_grad()
+    """
+    Trains the model for one epoch and evaluates it on the validation set.
+
+    Args:
+    - model: The PyTorch model to train.
+    - optimizer: The optimizer to use for training.
+    - criterion: The loss function to use for training.
+    - train_loader: The DataLoader for the training set.
+    - validation_loader: The DataLoader for the validation set.
+    - device: The device to run the training on (CPU or GPU).
+
+    Returns:
+    - None
+    """
+    # Training loop
+    model.train()
+    for inputs, labels in train_loader:
+        inputs, labels = inputs.to(device), labels.to(device)
+
+        optimizer.zero_grad()
+
+        outputs = model(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+    # Validation loop
+    model.eval()
+    validation_loss = 0.0
+    with torch.no_grad():
+        for inputs, labels in validation_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+
             outputs = model(inputs)
             loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
-            train_loss += loss.item()
 
-        # Validation loop
-        model.eval()
-        test_loss = 0.0
-        with torch.no_grad():
-            for i, data in enumerate(test_loader, 0):
-                inputs, labels = data
-                outputs = model(inputs)
-                loss = criterion(outputs, labels)
-                test_loss += loss.item()
+            validation_loss += loss.item()
 
-        print(
-            f"Epoch {epoch+1}/{epochs}, Train Loss: {train_loss/len(train_loader)}, Test Loss: {test_loss/len(test_loader)}"
-        )
+    validation_loss /= len(validation_loader)
+    print(f"Validation Loss: {validation_loss:.4f}")
 
 
 def test(model: torch.nn.Module, criterion: torch.nn.Module, test_loader: DataLoader):
@@ -88,8 +102,11 @@ def test(model: torch.nn.Module, criterion: torch.nn.Module, test_loader: DataLo
 
 
 def main():
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     # Define the model
-    model = Predictor()
+    model = LSTMModel(input_size=1, hidden_size=32, num_layers=2, output_size=1)
+    model.to(device)
 
     # Define the optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -109,7 +126,7 @@ def main():
         train_dataloader, batch_size, n_splits=5
     ):
         # Train the model
-        train(model, optimizer, criterion, train_loader, validation_loader)
+        train(model, optimizer, criterion, train_loader, validation_loader, device)
 
     # Test the model
     test(model, criterion, test_loader)

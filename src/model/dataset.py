@@ -14,6 +14,8 @@ class StockDataset(Dataset):
         return self.db.stocks.count_documents({"symbol": self.symbol})
 
     def __getitem__(self, idx):
-        data = self.db.stocks.find_one({"symbol": self.symbol}, skip=int(idx))
+        data = self.db.stocks.find_one({"symbol": self.symbol}, skip=idx)
 
-        return torch.tensor(data["open"]), torch.tensor(data["close"])
+        data = torch.tensor(data["close"]).view(1, -1).float()
+
+        return data, data
