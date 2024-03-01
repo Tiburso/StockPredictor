@@ -25,22 +25,17 @@ def train_test_dataloader(symbol, batch_size=64):
     return train_loader, test_loader
 
 
-def k_fold_dataloader(symbol, batch_size=64, n_splits=5):
-    dataset = StockDataset(symbol, batch_size)
-
+def k_fold_dataloader(train_dataloader: DataLoader, batch_size=64, n_splits=5):
     kf = KFold(n_splits=n_splits)
 
-    dataloaders = []
-    for train_idx, test_idx in kf.split(dataset):
-        train_dataset = Subset(dataset, train_idx)
-        test_dataset = Subset(dataset, test_idx)
+    for train_idx, test_idx in kf.split(train_dataloader.dataset):
+        train_dataset = Subset(train_dataloader.dataset, train_idx)
+        test_dataset = Subset(train_dataloader.dataset, test_idx)
 
         train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
         test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
-        dataloaders.append((train_loader, test_loader))
-
-    return dataloaders
+        yield train_loader, test_loader
 
 
 def train(
@@ -110,9 +105,7 @@ def main():
     train_loader, test_loader = train_test_dataloader(symbol, batch_size)
 
     # Implement K-Fold Cross Validation
-    dataloaders = k_fold_dataloader(symbol, batch_size, n_splits=5)
-
-    for train_loader, test_loader in dataloaders:
+    for train_loader, test_loader in k_fold_dataloader(symbol, batch_size, n_splits=5):
         # Train the model
         train(model, optimizer, criterion, train_loader, test_loader)
 
