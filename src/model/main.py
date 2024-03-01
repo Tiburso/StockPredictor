@@ -102,12 +102,14 @@ def main():
     batch_size = 64
 
     # Get the dataloaders
-    train_loader, test_loader = train_test_dataloader(symbol, batch_size)
+    train_dataloader, test_loader = train_test_dataloader(symbol, batch_size)
 
     # Implement K-Fold Cross Validation
-    for train_loader, test_loader in k_fold_dataloader(symbol, batch_size, n_splits=5):
+    for train_loader, validation_loader in k_fold_dataloader(
+        train_dataloader, batch_size, n_splits=5
+    ):
         # Train the model
-        train(model, optimizer, criterion, train_loader, test_loader)
+        train(model, optimizer, criterion, train_loader, validation_loader)
 
     # Test the model
     test(model, criterion, test_loader)
