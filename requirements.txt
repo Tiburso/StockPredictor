@@ -5,3 +5,5 @@ matplotlib
 kafka-python
 pandas
 pymongo
+torch
+scikit-learn
