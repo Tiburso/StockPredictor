@@ -1,11 +1,14 @@
 import torch
-from dataset import StockDataset
 from torch.utils.data import DataLoader, Subset
 
 from sklearn.model_selection import train_test_split, KFold
 
 # Metrics
 from sklearn.metrics import mean_squared_error
+
+
+from dataset import StockDataset
+from predictor import Predictor
 
 
 def train_test_dataloader(symbol, from_date, to_date, batch_size=64):
@@ -91,10 +94,10 @@ def test(model: torch.nn.Module, criterion: torch.nn.Module, test_loader: DataLo
 
 def main():
     # Define the model
-    model = torch.nn.Linear(1, 1)
+    model = Predictor()
 
     # Define the optimizer
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     # Define the loss function
     criterion = torch.nn.MSELoss()
