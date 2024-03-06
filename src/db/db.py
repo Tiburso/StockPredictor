@@ -1,4 +1,4 @@
-import asyncio
+from pandas import DataFrame
 
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -28,5 +28,20 @@ async def insert_stock_data(symbol, date, open, high, low, close, volume):
     await stock.insert()
 
 
-async def get_stocks(from_date, to_date):
-    return await Stock.find(Stock.date >= from_date, Stock.date <= to_date).to_list()
+async def get_stocks(
+    from_date: str | None = None, to_date: str | None = None, limit: int | None = None
+):
+    search_criteria = {}
+
+    if from_date:
+        search_criteria["date"] = {"$gte": from_date}
+
+    if to_date:
+        search_criteria["date"] = {"$lte": to_date}
+
+    stocks = await Stock.find(search_criteria, limit=limit).to_list()
+
+    return DataFrame(
+        [stock.model_dump(exclude=["id", "date"]) for stock in stocks],
+        index=[stock.date for stock in stocks],
+    )
