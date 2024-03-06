@@ -3,14 +3,14 @@ import asyncio
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from documents import Stock
+from db.documents import Stock
 
 
 async def init_db(url="localhost", port=27017, db_name="stocks"):
     url = f"mongodb://{url}:{port}"
     client = AsyncIOMotorClient(url)
 
-    await init_beanie(database=db_name, document_models=[Stock])
+    await init_beanie(database=client.get_database(db_name), document_models=[Stock])
 
 
 # Insert ticker data into the appropriate collection

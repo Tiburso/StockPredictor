@@ -6,5 +6,5 @@ TICKERS = [
     "TSLA",
     "GOOGL",
     "AMZN",
-    "FB",
+    "META",
 ]

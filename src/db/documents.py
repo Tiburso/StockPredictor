@@ -2,8 +2,8 @@ from beanie import Document, Indexed
 
 
 class Stock(Document):
-    symbol: Indexed(str)
-    date: str
+    symbol: str
+    date: str = Indexed()
     open: float
     high: float
     low: float
