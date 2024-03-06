@@ -17,7 +17,9 @@ logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler())
 
 
-def get_intraday_data(symbol, interval="15min", outputsize="compact", date=None):
+def get_intraday_data(
+    symbol, interval="15min", outputsize="compact", date=None
+) -> dict:
     params = {
         "function": "TIME_SERIES_INTRADAY",
         "symbol": symbol,
@@ -79,7 +81,12 @@ def main():
 
     symbol = "AAPL"
 
-    get_historical_intraday_data(symbol, "2021-01", "2022-01")
+    data = get_intraday_data(symbol, "15min", "full")
+    df = convert_to_df(data)
+
+    print(df.head())
+
+    # get_historical_intraday_data(symbol, "2021-01", "2022-01")
 
     # for data in get_historical_intraday_data(symbol, "2021-01", "2022-0"):
 
