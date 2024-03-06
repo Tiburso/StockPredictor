@@ -2,4 +2,9 @@
 TICKERS = [
     "AAPL",
     "MSFT",
+    "NVDA",
+    "TSLA",
+    "GOOGL",
+    "AMZN",
+    "FB",
 ]

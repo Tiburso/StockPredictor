@@ -1,11 +1,22 @@
-requests
 python-dotenv
-pandas
-matplotlib
+
+# Infra libraries
 kafka-python
-pandas
 pymongo
+
+# Visualization libraries
+matplotlib
+seaborn
+
+# ML libraries
 torch
 scikit-learn
-seaborn
+pandas
+
+# Web scraping libraries
 yfinance
+
+# Requests libraries
+requests
+requests-cache
+requests-ratelimiter
