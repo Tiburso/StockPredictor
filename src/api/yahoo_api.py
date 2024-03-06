@@ -33,7 +33,17 @@ async def main():
 
     for ticker in TICKERS:
         logger.info(f"Inserting {ticker} into database")
-        await insert_stock_data(df[ticker], ticker)
+
+        for index, row in df[ticker].iterrows():
+            await insert_stock_data(
+                symbol=ticker,
+                date=index.strftime("%Y-%m-%d"),
+                open=row["Open"],
+                high=row["High"],
+                low=row["Low"],
+                close=row["Close"],
+                volume=row["Volume"],
+            )
 
 
 if __name__ == "__main__":
