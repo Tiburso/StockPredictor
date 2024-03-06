@@ -26,3 +26,7 @@ async def insert_stock_data(symbol, date, open, high, low, close, volume):
     )
 
     await stock.insert()
+
+
+async def get_stocks(from_date, to_date):
+    return await Stock.find(Stock.date >= from_date, Stock.date <= to_date).to_list()

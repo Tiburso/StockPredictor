@@ -1,8 +1,6 @@
 import torch
 from torch.utils.data import Dataset
 
-from db import get_db
-
 
 class StockDataset(Dataset):
     def __init__(self, symbol, batch_size=64):
