@@ -6,7 +6,7 @@ import time
 
 import pandas as pd
 
-from db import get_db
+from db.db import get_db
 
 dotenv.load_dotenv()
 

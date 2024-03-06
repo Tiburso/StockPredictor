@@ -2,6 +2,7 @@ python-dotenv
 
 # Infra libraries
 kafka-python
+beanie
 pymongo
 
 # Visualization libraries

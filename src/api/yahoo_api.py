@@ -5,7 +5,7 @@ import dotenv
 import requests
 import logging
 import time
-from db import get_db
+from db.db import get_db
 
 dotenv.load_dotenv()
 
