@@ -29,9 +29,15 @@ async def insert_stock_data(symbol, date, open, high, low, close, volume):
 
 
 async def get_stocks(
-    from_date: str | None = None, to_date: str | None = None, limit: int | None = None
+    symbol: str | None = None,
+    from_date: str | None = None,
+    to_date: str | None = None,
+    limit: int | None = None,
 ):
     search_criteria = {}
+
+    if symbol:
+        search_criteria["symbol"] = symbol
 
     if from_date:
         search_criteria["date"] = {"$gte": from_date}

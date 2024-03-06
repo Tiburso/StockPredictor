@@ -1,3 +1,5 @@
+import numpy as np  # Linear algebra
+
 import matplotlib.pyplot as plt  # Visualization
 import matplotlib.dates as mdates  # Formatting dates
 import seaborn as sns  # Visualization
@@ -21,7 +23,8 @@ def data_plot(df: pd.DataFrame):
     plt.show()
 
 
-def plot_loss(num_epochs: int, train_loss: list, valid_loss: list):
+def plot_loss(train_loss: list, valid_loss: list):
+    num_epochs = len(train_loss)
     plt.plot(range(num_epochs), train_loss, label="Training Loss")
     plt.plot(range(num_epochs), valid_loss, label="Validation Loss")
     plt.xlabel("Epoch")
@@ -30,20 +33,50 @@ def plot_loss(num_epochs: int, train_loss: list, valid_loss: list):
     plt.show()
 
 
-def plot_forecasting(df: pd.DataFrame, forecast: pd.DataFrame, title: str):
-    # Set the size of the plot
-    plt.figure(figsize=(14, 7))
+def plot_forecasting(
+    test_data: pd.DataFrame,
+    sequence_to_plot: np.ndarray,
+    forecasted_values: np.ndarray,
+    combined_index: pd.DatetimeIndex,
+    scaler,
+    forecast_horizon: int,
+):
+    # Test data
+    plt.plot(
+        test_data.index[-100:-forecast_horizon],
+        test_data["open"][-100:-forecast_horizon],
+        label="test_data",
+        color="b",
+    )
+    # reverse the scaling transformation
+    original_cases = scaler.inverse_transform(
+        np.expand_dims(sequence_to_plot[-1], axis=0)
+    ).flatten()
 
-    plt.plot(df.index, df, label="Observed", color="black")
-    plt.plot(forecast.index, forecast["mean"], label="Forecast", color="red")
-    plt.fill_between(
-        forecast.index,
-        forecast["mean_ci_lower"],
-        forecast["mean_ci_upper"],
-        color="red",
-        alpha=0.2,
+    # the historical data used as input for forecasting
+    plt.plot(
+        test_data.index[-forecast_horizon:],
+        original_cases,
+        label="actual values",
+        color="green",
     )
 
-    plt.title(title)
+    # Forecasted Values
+    # reverse the scaling transformation
+    forecasted_cases = scaler.inverse_transform(
+        np.expand_dims(forecasted_values, axis=0)
+    ).flatten()
+    # plotting the forecasted values
+
+    plt.plot(
+        combined_index[-2 * forecast_horizon :],
+        forecasted_cases,
+        label="forecasted values",
+        color="red",
+    )
+
+    plt.xlabel("Time Step")
+    plt.ylabel("Value")
     plt.legend()
-    plt.show()
+    plt.title("Time Series Forecasting")
+    plt.grid(True)
