@@ -7,3 +7,5 @@ pandas
 pymongo
 torch
 scikit-learn
+seaborn
+yfinance
