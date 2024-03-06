@@ -13,6 +13,7 @@ seaborn
 torch
 scikit-learn
 pandas
+numpy
 
 # Web scraping libraries
 yfinance
