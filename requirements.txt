@@ -3,17 +3,17 @@ python-dotenv
 # Infra libraries
 kafka-python
 beanie
-pymongo
 
 # Visualization libraries
 matplotlib
 seaborn
 
 # ML libraries
-torch
-scikit-learn
 pandas
 numpy
+torch
+scikit-learn
+lightning
 
 # Web scraping libraries
 yfinance
