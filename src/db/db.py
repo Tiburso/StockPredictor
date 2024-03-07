@@ -47,7 +47,15 @@ async def get_stocks(
 
     stocks = await Stock.find(search_criteria, limit=limit).to_list()
 
-    return DataFrame(
+    df = DataFrame(
         [stock.model_dump(exclude=["id", "date"]) for stock in stocks],
         index=[stock.date for stock in stocks],
     )
+
+    # Set volume as integer
+    df["volume"] = df["volume"].astype(int)
+
+    # Set index as datetime index
+    df.index = df.index.astype("datetime64[ns]")
+
+    return df
