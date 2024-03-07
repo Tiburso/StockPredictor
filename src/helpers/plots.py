@@ -49,9 +49,7 @@ def plot_forecasting(
         color="b",
     )
     # reverse the scaling transformation
-    original_cases = scaler.inverse_transform(
-        np.expand_dims(sequence_to_plot[-1], axis=0)
-    ).flatten()
+    original_cases = sequence_to_plot[-1].flatten()
 
     # the historical data used as input for forecasting
     plt.plot(
@@ -63,9 +61,7 @@ def plot_forecasting(
 
     # Forecasted Values
     # reverse the scaling transformation
-    forecasted_cases = scaler.inverse_transform(
-        np.expand_dims(forecasted_values, axis=0)
-    ).flatten()
+    forecasted_cases = forecasted_values
     # plotting the forecasted values
 
     plt.plot(
