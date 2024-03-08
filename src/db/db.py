@@ -29,7 +29,7 @@ async def insert_stock_data(symbol, date, open, high, low, close, volume):
 
 
 async def get_stocks(
-    symbol: str | None = None,
+    symbol: str | list = None,
     from_date: str | None = None,
     to_date: str | None = None,
     limit: int | None = None,
@@ -37,7 +37,9 @@ async def get_stocks(
     search_criteria = {}
 
     if symbol:
-        search_criteria["symbol"] = symbol
+        search_criteria["symbol"] = (
+            symbol if isinstance(symbol, str) else {"$in": symbol}
+        )
 
     if from_date:
         search_criteria["date"] = {"$gte": from_date}
@@ -52,10 +54,10 @@ async def get_stocks(
         index=[stock.date for stock in stocks],
     )
 
-    # Set volume as integer
-    df["volume"] = df["volume"].astype(int)
+    # # # Set volume as integer
+    # df["volume"] = df["volume"].astype(int)
 
-    # Set index as datetime index
-    df.index = df.index.astype("datetime64[ns]")
+    # # Set index as datetime index
+    # df.index = df.index.astype("datetime64[ns]")
 
     return df

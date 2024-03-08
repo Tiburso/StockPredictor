@@ -9,10 +9,10 @@ class LitLSTMModel(pl.LightningModule):
     # input_size : number of features in input at each time step
     # hidden_size : Number of LSTM units
     # num_layers : number of LSTM layers
-    def __init__(self, input_size, hidden_size, num_layers):
+    def __init__(self, input_size, output_size, hidden_size, num_layers):
         super().__init__()
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
-        self.linear = nn.Linear(hidden_size, 1)
+        self.linear = nn.Linear(hidden_size, output_size)
         self.apply(self._weights_init)
 
     def _weights_init(self, m):
