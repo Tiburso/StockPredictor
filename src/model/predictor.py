@@ -5,6 +5,43 @@ import torch.optim as optim
 import pytorch_lightning as pl
 
 
+class Baseline(pl.LightningModule):
+    """Baseline model for time series forecasting"""
+
+    def __init__(self, input_size, output_size):
+        super().__init__()
+        self.linear = nn.Linear(input_size, output_size)
+
+    def forward(self, x):
+        return self.linear(x)
+
+    def training_step(self, batch, batch_idx, validation=False):
+        X, y = batch
+        y_hat = self(X)
+        loss = torch.nn.functional.mse_loss(y_hat, y)
+        self.log("train_loss", loss, prog_bar=not validation)
+        return loss
+
+    def evaluate(self, batch, stage=None):
+        x, y = batch
+        y_hat = self(x)
+        loss = torch.nn.functional.mse_loss(y_hat, y)
+        preds = y_hat
+
+        if stage:
+            self.log(f"{stage}_loss", loss, prog_bar=True)
+
+    def validation_step(self, batch, batch_idx):
+        self.evaluate(batch, "val")
+
+    def test_step(self, batch, batch_idx):
+        self.evaluate(batch, "test")
+
+    def configure_optimizers(self):
+        optimizer = optim.Adam(self.parameters(), lr=1e-3)
+        return optimizer
+
+
 class LitLSTMModel(pl.LightningModule):
     # input_size : number of features in input at each time step
     # hidden_size : Number of LSTM units
